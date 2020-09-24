@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 try {
-    require_once __DIR__.'/vendor/autoload.php';
+    require __DIR__.'/vendor/autoload.php';
 
     $container = new Container();
     $dispatcher = new Dispatcher();
@@ -29,4 +29,5 @@ try {
 
     $app->run(new ArgvInput(), new ConsoleOutput());
 } catch (Throwable $e) {
+    echo $e;
 }
