@@ -1,10 +1,10 @@
 <?php
-
 namespace Jakmall\Recruitment\Calculator\Commands;
 
 use Illuminate\Console\Command;
+use Jakmall\Recruitment\Calculator\Interfaces\OperatorInterface;
 
-class AddCommand extends Command
+class AddCommand extends Command implements OperatorInterface
 {
     /**
      * @var string
@@ -26,6 +26,8 @@ class AddCommand extends Command
             $this->getCommandPassiveVerb()
         );
         $this->description = sprintf('%s all given Numbers', ucfirst($commandVerb));
+
+        parent::__construct();
     }
 
     protected function getCommandVerb(): string
