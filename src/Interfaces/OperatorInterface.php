@@ -2,10 +2,10 @@
 
 namespace Jakmall\Recruitment\Calculator\Interfaces;
     
-interface OperatorInterace
+interface OperatorInterface
 {
-    function generateCalculationDescription();
-    function getOperator();
-    function calculateAll();
-    function calculate();
+    public function generateCalculationDescription(array $numbers);
+    public function getOperator();
+    public function calculateAll(array $numbers);
+    public function calculate($number1, $number2);
 }

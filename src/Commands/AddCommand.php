@@ -1,10 +1,12 @@
 <?php
 namespace Jakmall\Recruitment\Calculator\Commands;
 
+
 use Illuminate\Console\Command;
 use Jakmall\Recruitment\Calculator\Interfaces\OperatorInterface;
+use Jakmall\Recruitment\Calculator\Commands\BaseCommand;
 
-class AddCommand extends Command implements OperatorInterface
+class AddCommand extends BaseCommand implements OperatorInterface
 {
     /**
      * @var string
@@ -18,26 +20,13 @@ class AddCommand extends Command implements OperatorInterface
 
     public function __construct()
     {
-        $commandVerb = $this->getCommandVerb();
+        $this->setCommandVerb('add');
+        $this->setCommandPassiveVerb('added');
 
-        $this->signature = sprintf(
-            '%s {numbers* : The numbers to be %s}',
-            $commandVerb,
-            $this->getCommandPassiveVerb()
-        );
-        $this->description = sprintf('%s all given Numbers', ucfirst($commandVerb));
+        $this->signature = $this->getSignature();
+        $this->description = $this->getDescription();
 
         parent::__construct();
-    }
-
-    protected function getCommandVerb(): string
-    {
-        return 'add';
-    }
-
-    protected function getCommandPassiveVerb(): string
-    {
-        return 'added';
     }
 
     public function handle(): void
@@ -54,7 +43,7 @@ class AddCommand extends Command implements OperatorInterface
         return $this->argument('numbers');
     }
 
-    protected function generateCalculationDescription(array $numbers): string
+    public function generateCalculationDescription(array $numbers): string
     {
         $operator = $this->getOperator();
         $glue = sprintf(' %s ', $operator);
@@ -62,7 +51,7 @@ class AddCommand extends Command implements OperatorInterface
         return implode($glue, $numbers);
     }
 
-    protected function getOperator(): string
+    public function getOperator(): string
     {
         return '+';
     }
@@ -72,7 +61,7 @@ class AddCommand extends Command implements OperatorInterface
      *
      * @return float|int
      */
-    protected function calculateAll(array $numbers)
+    public function calculateAll(array $numbers)
     {
         $number = array_pop($numbers);
 
@@ -89,7 +78,7 @@ class AddCommand extends Command implements OperatorInterface
      *
      * @return int|float
      */
-    protected function calculate($number1, $number2)
+    public function calculate($number1, $number2)
     {
         return $number1 + $number2;
     }
