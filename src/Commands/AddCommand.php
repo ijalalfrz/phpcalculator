@@ -4,7 +4,9 @@ namespace Jakmall\Recruitment\Calculator\Commands;
 
 use Illuminate\Console\Command;
 use Jakmall\Recruitment\Calculator\Interfaces\OperatorInterface;
+use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 use Jakmall\Recruitment\Calculator\Commands\BaseCommand;
+
 
 class AddCommand extends BaseCommand implements OperatorInterface
 {
@@ -17,9 +19,12 @@ class AddCommand extends BaseCommand implements OperatorInterface
      * @var string
      */
     protected $description;
+    protected $service;
 
-    public function __construct()
+
+    public function __construct(CommandHistoryManagerInterface $history_service)
     {
+        $this->service = $history_service;
         $this->setCommandVerb('add');
         $this->setCommandPassiveVerb('added');
 
@@ -31,11 +36,23 @@ class AddCommand extends BaseCommand implements OperatorInterface
 
     public function handle(): void
     {
+        $this->service->setDriver('database');
+        $model = $this->service->getModel();
+        
         $numbers = $this->getInput();
         $description = $this->generateCalculationDescription($numbers);
         $result = $this->calculateAll($numbers);
 
+        $result_str = $description.' = '.$result;
+        $model->command = \ucfirst($this->getCommandVerb());
+        $model->description = $description;
+        $model->result = $result;
+        $model->output = $result_str;
+        $model->time = date("Y-m-d H:i:s");
+        $model->insert();
+
         $this->comment(sprintf('%s = %s', $description, $result));
+
     }
 
     protected function getInput(): array

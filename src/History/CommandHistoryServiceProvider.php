@@ -14,13 +14,14 @@ class CommandHistoryServiceProvider implements ContainerServiceProviderInterface
     /**
      * @inheritDoc
      */
-    public function register(Container $container): void
+    public function register(Container $container, $config): void
     {
+        
         $container->bind(
             CommandHistoryManagerInterface::class,
-            function () {
+            function () use ($config) {
                 //todo: register implementation
-                return new CommandHistory();
+                return new CommandHistory($config);
             }
         );
     }

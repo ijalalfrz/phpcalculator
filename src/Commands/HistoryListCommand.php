@@ -23,9 +23,9 @@ class HistoryListCommand extends BaseCommand
     protected $description;
     protected $service;
 
-    public function __construct(CommandHistoryManagerInterface $historyService)
+    public function __construct(CommandHistoryManagerInterface $history_service)
     {   
-        $this->service = $historyService;
+        $this->service = $history_service;
         $this->setCommandVerb('history');
 
         $this->signature = $this->getSignature();
@@ -36,7 +36,8 @@ class HistoryListCommand extends BaseCommand
 
     public function handle(): void
     {
-        $numbers = $this->getInput();
+        $input = $this->getInput();
+        $this->service->setDriver($input['driver']);
         // $description = $this->generateCalculationDescription($numbers);
         // $result = $this->calculateAll($numbers);
 
