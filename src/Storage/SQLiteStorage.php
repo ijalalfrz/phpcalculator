@@ -63,7 +63,6 @@ class SQLiteStorage implements StorageConnectionInterface
 
     public function filterByColumn($table_name, $column)
     {
-
         try {
 
             $sql = "SELECT * FROM ".$table_name;
@@ -71,22 +70,24 @@ class SQLiteStorage implements StorageConnectionInterface
             $where_or = ' ';
     
             $idx = 0;
+           
             $values = [];
             foreach($column as $k => $list_val) {
                 
                 foreach($list_val as $v) {
-                    $values[':'.$k] = ucfirst($v);
+                    $values[':'.$idx.$k] = ucfirst($v);
                     if ($idx == 0) {
-                        $where_or = $where_or.'WHERE '.$k.' = :'.$k;
+                        $where_or = $where_or.'WHERE '.$k.' = :'.$idx.$k;
                     } else {
-                        $where_or = $where_or.'OR WHERE '.$k.' = :'.$k;
+                        $where_or = $where_or.' OR '.$k.' = :'.$idx.$k;
                     }
+                    $idx++;
                 }
 
-                $idx++;
             }
             
             $sql = $sql.$where_or;
+            // print($sql);
 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute($values);
