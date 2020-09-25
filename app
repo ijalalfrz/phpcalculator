@@ -32,6 +32,7 @@ try {
     ;
 
     $app->addCommands($commands);
+    
 
     $app->run(new ArgvInput(), new ConsoleOutput());
 } catch (Throwable $e) {
