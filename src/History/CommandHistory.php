@@ -28,14 +28,28 @@ class CommandHistory implements CommandHistoryManagerInterface
         $this->history = new HistoryModel($this->driver[$driver]);
     }
 
-    public function getModel()
+
+    public function store(HistoryModel $data)
     {
-        return $this->history;
+        $this->history->command = $data->command;
+        $this->history->description = $data->description;
+        $this->history->result = $data->result;
+        $this->history->output = $data->output;
+        $this->history->time = date("Y-m-d H:i:s");
+        $this->history->insert();
+
     }
 
     public function findAll(): array
     {
-        return ['test','test2','test3'];
+        $data = $this->history->getAll();
+        return $data;
+    }
+
+    public function filter($column): array
+    {
+        $data = $this->history->filterBy($column);
+        return $data;
     }
 
     public function log($command): bool
@@ -45,7 +59,7 @@ class CommandHistory implements CommandHistoryManagerInterface
 
     public function clearAll():bool
     {
-        return True;
+        return $this->history->deleteAll();
     }
 
 }

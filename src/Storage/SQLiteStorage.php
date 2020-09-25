@@ -23,6 +23,7 @@ class SQLiteStorage implements StorageConnectionInterface
         }
     }
 
+
     public function createTable($table_name, $prop)
     {
         try{
@@ -41,8 +42,77 @@ class SQLiteStorage implements StorageConnectionInterface
             }
 
             $this->conn->exec($sql);
-
+            return TRUE;
         } catch (Throwable $e) {
+            throw $e;
+        }
+    }
+
+    public function selectAllColumn($table_name)
+    {
+        $sql = "SELECT * FROM ".$table_name;
+        $stmt = $this->conn->query($sql);
+
+        $data = [];
+        while ($history = $stmt->fetchObject()) {
+            $data[] = $history;
+        }
+
+        return $data;
+    }
+
+    public function filterByColumn($table_name, $column)
+    {
+
+        try {
+
+            $sql = "SELECT * FROM ".$table_name;
+    
+            $where_or = ' ';
+    
+            $idx = 0;
+            $values = [];
+            foreach($column as $k => $list_val) {
+                
+                foreach($list_val as $v) {
+                    $values[':'.$k] = ucfirst($v);
+                    if ($idx == 0) {
+                        $where_or = $where_or.'WHERE '.$k.' = :'.$k;
+                    } else {
+                        $where_or = $where_or.'OR WHERE '.$k.' = :'.$k;
+                    }
+                }
+
+                $idx++;
+            }
+            
+            $sql = $sql.$where_or;
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($values);
+
+            $data = [];
+            while ($history = $stmt->fetchObject()) {
+                $data[] = $history;
+            }
+    
+            return $data;
+        } catch (\PDOException $e) {
+            throw $e;
+        }
+
+
+
+
+    }
+
+    public function deleteAllData($table_name)
+    {
+        try{
+            $sql = "DELETE FROM ".$table_name;
+            $this->conn->exec($sql);
+            return TRUE;
+        } catch (\PDOException $e) {
             throw $e;
         }
     }
@@ -83,6 +153,7 @@ class SQLiteStorage implements StorageConnectionInterface
                 $idx += 1;
             }
             $stmt->execute($values);
+            return TRUE;
         } catch(\PDOException $e) {
             throw $e;
         }

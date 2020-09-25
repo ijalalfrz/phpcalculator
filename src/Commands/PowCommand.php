@@ -4,8 +4,10 @@ namespace Jakmall\Recruitment\Calculator\Commands;
 
 use Illuminate\Console\Command;
 use Jakmall\Recruitment\Calculator\Interfaces\ComplexOperatorInterface;
+use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 use Jakmall\Recruitment\Calculator\Commands\BaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
+use Jakmall\Recruitment\Calculator\Models\HistoryModel;
 
 class PowCommand extends BaseCommand implements ComplexOperatorInterface
 {
@@ -18,9 +20,12 @@ class PowCommand extends BaseCommand implements ComplexOperatorInterface
      * @var string
      */
     protected $description;
+    protected $service;
 
-    public function __construct()
+    public function __construct(CommandHistoryManagerInterface $history_service)
     {
+        $this->service = $history_service;
+
         $this->setCommandVerb('pow');
         $this->setCommandPassiveVerb('exponent');
 
@@ -52,6 +57,18 @@ class PowCommand extends BaseCommand implements ComplexOperatorInterface
         $exp = $input[1];
         $description = $this->generateCalculationDescription($input);
         $result = $this->calculate($number, $exp);
+        
+        # add command to db
+        $this->service->setDriver('database');
+
+        $result_str = $description.' = '.$result;
+        $model = new HistoryModel();
+        $model->command = \ucfirst($this->getCommandVerb());
+        $model->description = $description;
+        $model->result = $result;
+        $model->output = $result_str;
+
+        $this->service->store($model);
 
         $this->comment(sprintf('%s = %s', $description, $result));
     }

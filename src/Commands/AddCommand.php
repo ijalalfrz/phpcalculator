@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Jakmall\Recruitment\Calculator\Interfaces\OperatorInterface;
 use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 use Jakmall\Recruitment\Calculator\Commands\BaseCommand;
+use Jakmall\Recruitment\Calculator\Models\HistoryModel;
 
 
 class AddCommand extends BaseCommand implements OperatorInterface
@@ -37,19 +38,20 @@ class AddCommand extends BaseCommand implements OperatorInterface
     public function handle(): void
     {
         $this->service->setDriver('database');
-        $model = $this->service->getModel();
         
         $numbers = $this->getInput();
         $description = $this->generateCalculationDescription($numbers);
         $result = $this->calculateAll($numbers);
-
+        
+        # add command to db
         $result_str = $description.' = '.$result;
+        $model = new HistoryModel();
         $model->command = \ucfirst($this->getCommandVerb());
         $model->description = $description;
         $model->result = $result;
         $model->output = $result_str;
-        $model->time = date("Y-m-d H:i:s");
-        $model->insert();
+
+        $this->service->store($model);
 
         $this->comment(sprintf('%s = %s', $description, $result));
 

@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Jakmall\Recruitment\Calculator\Interfaces\OperatorInterface;
 use Jakmall\Recruitment\Calculator\Commands\BaseCommand;
 use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
+use Jakmall\Recruitment\Calculator\Models\HistoryModel;
 
 
 class HistoryListCommand extends BaseCommand
@@ -30,6 +31,7 @@ class HistoryListCommand extends BaseCommand
 
         $this->signature = $this->getSignature();
         $this->description = $this->getDescription();
+        $this->model = new HistoryModel();
 
         parent::__construct();
     }
@@ -38,10 +40,32 @@ class HistoryListCommand extends BaseCommand
     {
         $input = $this->getInput();
         $this->service->setDriver($input['driver']);
-        // $description = $this->generateCalculationDescription($numbers);
-        // $result = $this->calculateAll($numbers);
 
-        // $this->comment(sprintf('%s = %s', $description, $result));
+        if ($input['filter']) {
+
+            $filter['command'] =  $input['filter'];
+            $data = $this->service->filter($filter);
+        } else {
+            $data = $this->service->findAll();
+        }
+
+
+        $header = array_keys($this->model->getColumn());
+        $new_header = array_unshift($header, "no");
+
+        $arr_data = [];
+        $no = 1;
+        if ($data) {
+            foreach($data as $d)
+            {
+                array_push($arr_data, [$no, $d->command, $d->description, $d->result, $d->output, $d->time]);
+                $no++;
+            }
+            $this->table($header, $arr_data);
+        }else{
+            $this->info("History is empty.");
+        }
+        
     }
 
     protected function getInput(): array

@@ -12,10 +12,13 @@ class HistoryModel
     public $output;
     public $time;
 
-    public function __construct(StorageConnectionInterface $storage)
+    public function __construct(StorageConnectionInterface $storage = NULL)
     {
-        $this->storage = $storage;
-        $this->storage->createTable($this->table_name, $this->getColumn());
+        if ($storage)
+        {
+            $this->storage = $storage;
+            $this->storage->createTable($this->table_name, $this->getColumn());
+        }
     }
 
     public function getColumn()
@@ -40,6 +43,21 @@ class HistoryModel
         }
     }
 
+    public function getAll()
+    {
+        $data = $this->storage->selectAllColumn($this->table_name);
+        return $data;
+    }
 
+    public function deleteAll()
+    {
+        return $this->storage->deleteAllData($this->table_name);
+    }
+
+    public function filterBy($column_data)
+    {
+        $data = $this->storage->filterByColumn($this->table_name, $column_data);
+        return $data;
+    }
 
 }

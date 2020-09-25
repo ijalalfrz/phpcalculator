@@ -30,5 +30,5 @@ interface CommandHistoryManagerInterface
 
     public function setDriver($driver);
 
-    public function getModel();
+    
 }
