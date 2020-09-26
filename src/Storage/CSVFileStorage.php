@@ -41,20 +41,40 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
 
     public function selectAllColumn($table_name)
     {
+        $file = fopen($this->csv_path, 'r');
+        $header = fgetcsv($file, 1024);
+        \fclose($file);
+
+        $mapping_idx = [];
+        $idx = 0;
+        foreach ($header as $head) {
+            
+            $mapping_idx[$head] = $idx;
+            $idx ++;
+        }
+
+
+        $data_column = [];
         $data = [];
         $idx = 0;
         $file = fopen($this->csv_path, 'r');
         while(!feof($file))
         {
             $csv_line = fgetcsv($file, 1024);
+
             if ($idx != 0 && $csv_line) {
-                $data[] = $csv_line;
+                
+                foreach ($header as $head) {
+                    $data_column[$head] = $csv_line[$mapping_idx[$head]];
+                }
+
+                $data[] = (object) $data_column;
             }
 
             $idx++;
         }
         fclose($file);
-    
+
         return $data;
     }
 
@@ -73,14 +93,19 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
 
         // read data
         $data = [];
+        $data_column = [];
         $file = fopen($this->csv_path, 'r');
         while(!feof($file))
         {
             $csv_line = fgetcsv($file, 1024);
 
             foreach($column as $k => $filter_values) {
-                if ($csv_line && \in_array($csv_line[$mapping_idx[$k]], $filter_values)) {
-                    $data[] = $csv_line;
+
+                if ($csv_line && \in_array(\lcfirst($csv_line[$mapping_idx[$k]]), $filter_values)) {
+                    foreach ($header as $head) {
+                        $data_column[$head] = $csv_line[$mapping_idx[$head]];
+                    }
+                    $data[] = (object) $data_column;
                 }
             }
 

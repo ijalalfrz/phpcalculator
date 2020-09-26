@@ -11,5 +11,5 @@ interface ContainerServiceProviderInterface
      *
      * @return void
      */
-    public function register(Container $container, $config): void;
+    public function register(Container $container, $config=NULL): void;
 }

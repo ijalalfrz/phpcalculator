@@ -58,12 +58,9 @@ class HistoryListCommand extends BaseCommand
         $no = 1;
         if ($data) {
             foreach($data as $d)
-            {
-                if (\is_array($d)) {
-                    array_push($arr_data, [$no, $d[1], $d[2], $d[3], $d[4], $d[5]]);
-                } else {
-                    array_push($arr_data, [$no, $d->command, $d->description, $d->result, $d->output, $d->time]);
-                }
+            {               
+                array_push($arr_data, [$no, $d->command, $d->description, $d->result, $d->output, $d->time]);
+                
                 $no++;
             }
             $this->table($header, $arr_data);

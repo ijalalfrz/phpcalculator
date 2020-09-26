@@ -63,6 +63,18 @@ class SQLiteStorage implements StorageConnectionInterface, StorageBLLInterface
         return $data;
     }
 
+    public function getLastInsertedData($table_name)
+    {
+        $sql = "SELECT * FROM ".$table_name. " ORDER BY id DESC LIMIT 1";
+        $stmt = $this->conn->query($sql);
+
+        while ($history = $stmt->fetchObject()) {
+            $data = $history;
+        }
+
+        return $data;
+    }
+
     public function filterByColumn($table_name, $column)
     {
         try {

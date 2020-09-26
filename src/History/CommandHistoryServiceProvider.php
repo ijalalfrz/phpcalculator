@@ -14,7 +14,7 @@ class CommandHistoryServiceProvider implements ContainerServiceProviderInterface
     /**
      * @inheritDoc
      */
-    public function register(Container $container, $config): void
+    public function register(Container $container, $config=NULL): void
     {
         
         $container->bind(

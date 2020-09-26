@@ -49,7 +49,9 @@ class HistoryModel
 
     public function getAll()
     {
+        
         $data = $this->storage->selectAllColumn($this->table_name);
+
         return $data;
     }
 
@@ -61,6 +63,12 @@ class HistoryModel
     public function filterBy($column_data)
     {
         $data = $this->storage->filterByColumn($this->table_name, $column_data);
+        return $data;
+    }
+
+    public function getLastData()
+    {
+        $data = $this->storage->getLastInsertedData($this->table_name);
         return $data;
     }
 
