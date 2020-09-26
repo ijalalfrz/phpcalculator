@@ -66,4 +66,10 @@ class HistoryModel
         return $data;
     }
 
+    public function getLastData()
+    {
+        $data = $this->storage->getLastInsertedData($this->table_name);
+        return $data;
+    }
+
 }

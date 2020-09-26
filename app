@@ -36,5 +36,5 @@ try {
 
     $app->run(new ArgvInput(), new ConsoleOutput());
 } catch (Throwable $e) {
-    echo $e;
+    throw $e;
 }

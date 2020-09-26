@@ -57,9 +57,22 @@ class CommandHistory implements CommandHistoryManagerInterface
         return $data;
     }
 
+    public function lastData()
+    {
+        $data = $this->history->getLastData();
+        return $data;
+    }
+
     public function log($command): bool
     {
-        return True;
+        $cmd = 'php app '.$command;
+        exec($cmd, $out, $ret);
+        
+        if (!$ret) {
+            return true;
+        }
+
+        return false;
     }
 
     public function clearAll():bool
