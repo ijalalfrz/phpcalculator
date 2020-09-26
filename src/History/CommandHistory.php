@@ -57,6 +57,13 @@ class CommandHistory implements CommandHistoryManagerInterface
         return $data;
     }
 
+
+    public function remove($id)
+    {
+        $data = $this->history->deleteById($id);
+        return $data;
+    }
+
     public function filter($column): array
     {
         $data = $this->history->filterBy($column);

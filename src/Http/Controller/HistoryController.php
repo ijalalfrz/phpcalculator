@@ -48,9 +48,31 @@ class HistoryController
 
     }
 
-    public function remove()
+    public function remove(Request $req, $id)
     {
-        // todo: modify codes to remove history
-        dd('create remove history logic here');
+        $driver = 'database';
+        if ($req->has('driver')) {
+            $driver = $req->input('driver');
+        }
+        $this->history_service->setDriver($driver);
+        $data = $this->history_service->show($id);
+        if ($data) {
+            if ($this->history_service->remove($id)) {
+                $res = NULL;             
+            } else {
+                $res = [
+                    'code' => 400,
+                    'message' => 'Error removing data'
+                ];
+            }
+        } else{
+            $res = [
+                'code' => 404,
+                'message' => 'Data not found'
+            ];
+        }
+
+        $ress = new Response($res, $res['code']??204);
+        return $ress;
     }
 }

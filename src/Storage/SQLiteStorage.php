@@ -187,6 +187,24 @@ class SQLiteStorage implements StorageConnectionInterface, StorageBLLInterface
             throw $e;
         }
     }
+
+    public function deleteById($table_name, $id)
+    {
+        try {
+
+            $sql = "DELETE FROM ".$table_name. " WHERE id=:id";
+            $stmt = $this->conn->prepare($sql);
+    
+            $stmt->execute([
+                'id' => $id
+            ]);
+        
+    
+            return true;
+        } catch(Exception $e) {
+            throw $e;
+        }
+    }
 }
 
 ?>
