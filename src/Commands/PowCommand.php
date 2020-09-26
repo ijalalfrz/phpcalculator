@@ -59,7 +59,6 @@ class PowCommand extends BaseCommand implements ComplexOperatorInterface
         $result = $this->calculate($number, $exp);
         
         # add command to db
-        $this->service->setDriver('database');
 
         $result_str = $description.' = '.$result;
         $model = new HistoryModel();
@@ -68,6 +67,11 @@ class PowCommand extends BaseCommand implements ComplexOperatorInterface
         $model->result = $result;
         $model->output = $result_str;
 
+        $this->service->setDriver('database');
+        $id = $this->service->store($model);
+        
+        $model->id = $id;
+        $this->service->setDriver('file');
         $this->service->store($model);
 
         $this->comment(sprintf('%s = %s', $description, $result));

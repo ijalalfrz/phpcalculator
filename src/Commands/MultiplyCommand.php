@@ -43,7 +43,6 @@ class MultiplyCommand extends BaseCommand implements OperatorInterface
         $result = $this->calculateAll($numbers);
 
         # add command to db
-        $this->service->setDriver('database');
 
         $result_str = $description.' = '.$result;
         $model = new HistoryModel();
@@ -52,7 +51,13 @@ class MultiplyCommand extends BaseCommand implements OperatorInterface
         $model->result = $result;
         $model->output = $result_str;
 
+        $this->service->setDriver('database');
+        $id = $this->service->store($model);
+        
+        $model->id = $id;
+        $this->service->setDriver('file');
         $this->service->store($model);
+
 
         $this->comment(sprintf('%s = %s', $description, $result));
     }

@@ -5,6 +5,7 @@ namespace Jakmall\Recruitment\Calculator\History;
 
 use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 use Jakmall\Recruitment\Calculator\Storage\SQLiteStorage;
+use Jakmall\Recruitment\Calculator\Storage\CSVFileStorage;
 use Jakmall\Recruitment\Calculator\Models\HistoryModel;
 
 
@@ -17,8 +18,11 @@ class CommandHistory implements CommandHistoryManagerInterface
     public function __construct($config)
     {
         $sqlite_driver = new SQLiteStorage($config['sqlite_path']);
+        $file_driver = new CSVFileStorage($config['csvfile_path']);
 
         $this->driver['database'] ??= $sqlite_driver;
+        $this->driver['file'] ??= $file_driver;
+
     }
 
     public function setDriver($driver)
@@ -31,13 +35,14 @@ class CommandHistory implements CommandHistoryManagerInterface
 
     public function store(HistoryModel $data)
     {
+        $this->history->id = $data->id;
         $this->history->command = $data->command;
         $this->history->description = $data->description;
         $this->history->result = $data->result;
         $this->history->output = $data->output;
         $this->history->time = date("Y-m-d H:i:s");
-        $this->history->insert();
-
+        
+        return $this->history->insert();
     }
 
     public function findAll(): array

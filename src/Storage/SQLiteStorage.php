@@ -2,8 +2,10 @@
 namespace Jakmall\Recruitment\Calculator\Storage;
 
 use Jakmall\Recruitment\Calculator\Interfaces\StorageConnectionInterface;
+use Jakmall\Recruitment\Calculator\Interfaces\StorageBLLInterface;
 
-class SQLiteStorage implements StorageConnectionInterface
+
+class SQLiteStorage implements StorageConnectionInterface, StorageBLLInterface
 {
     private $path;
     public $conn;
@@ -27,7 +29,7 @@ class SQLiteStorage implements StorageConnectionInterface
     public function createTable($table_name, $prop)
     {
         try{
-            $sql = "CREATE TABLE IF NOT EXISTS ".$table_name." ( id INTEGER PRIMARY KEY AUTOINCREMENT, ";
+            $sql = "CREATE TABLE IF NOT EXISTS ".$table_name." ( ";
             
             $idx = 0;
             foreach($prop as $k => $v)
@@ -118,7 +120,7 @@ class SQLiteStorage implements StorageConnectionInterface
         }
     }
 
-    public function insert($table_name, $column, $data)
+    public function insert($table_name, $data)
     {
 
         $sql = "INSERT INTO ".$table_name." ";
@@ -129,17 +131,17 @@ class SQLiteStorage implements StorageConnectionInterface
 
         try{
 
-            foreach($column as $k => $v)
+            foreach($data as $column => $value)
             {
-                if ($idx == \sizeof($column)-1)
+                if ($idx == \sizeof($data)-1)
                 {
-                    $data_column = $data_column.$k.'';
-                    $prep_value = $prep_value.':'.$k;
+                    $data_column = $data_column.$column.'';
+                    $prep_value = $prep_value.':'.$column;
                 } else {
-                    $data_column = $data_column.$k.',';
-                    $prep_value = $prep_value.':'.$k.',';
+                    $data_column = $data_column.$column.',';
+                    $prep_value = $prep_value.':'.$column.',';
                 }
-                array_push($prep_value_list, ':'.$k);
+                array_push($prep_value_list, ':'.$column);
                 $idx += 1;
             }
             $sql = $sql."(".$data_column.") VALUES(".$prep_value.")";
@@ -150,11 +152,11 @@ class SQLiteStorage implements StorageConnectionInterface
             $values = [];
             foreach($prep_value_list as $prep)
             {
-                $values[$prep] = $data[$idx];
+                $values[$prep] = $data[ \str_replace(':','',$prep)];
                 $idx += 1;
             }
             $stmt->execute($values);
-            return TRUE;
+            return $this->conn->lastInsertId();
         } catch(\PDOException $e) {
             throw $e;
         }

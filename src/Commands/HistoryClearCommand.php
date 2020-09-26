@@ -36,7 +36,11 @@ class HistoryClearCommand extends BaseCommand
     public function handle(): void
     {
         $this->service->setDriver('database');
-        if ($this->service->clearAll()) {
+        $clear_db = $this->service->clearAll();
+        $this->service->setDriver('file');
+        $clear_file = $this->service->clearAll(); 
+        
+        if ($clear_db && $clear_file) {
             $this->info("History cleared!");
         }
         

@@ -51,6 +51,7 @@ class HistoryListCommand extends BaseCommand
 
 
         $header = array_keys($this->model->getColumn());
+        array_shift($header);
         $new_header = array_unshift($header, "no");
 
         $arr_data = [];
@@ -58,7 +59,11 @@ class HistoryListCommand extends BaseCommand
         if ($data) {
             foreach($data as $d)
             {
-                array_push($arr_data, [$no, $d->command, $d->description, $d->result, $d->output, $d->time]);
+                if (\is_array($d)) {
+                    array_push($arr_data, [$no, $d[1], $d[2], $d[3], $d[4], $d[5]]);
+                } else {
+                    array_push($arr_data, [$no, $d->command, $d->description, $d->result, $d->output, $d->time]);
+                }
                 $no++;
             }
             $this->table($header, $arr_data);

@@ -37,7 +37,6 @@ class AddCommand extends BaseCommand implements OperatorInterface
 
     public function handle(): void
     {
-        $this->service->setDriver('database');
         
         $numbers = $this->getInput();
         $description = $this->generateCalculationDescription($numbers);
@@ -50,8 +49,15 @@ class AddCommand extends BaseCommand implements OperatorInterface
         $model->description = $description;
         $model->result = $result;
         $model->output = $result_str;
-
+        
+        
+        $this->service->setDriver('database');
+        $id = $this->service->store($model);
+        
+        $model->id = $id;
+        $this->service->setDriver('file');
         $this->service->store($model);
+
 
         $this->comment(sprintf('%s = %s', $description, $result));
 

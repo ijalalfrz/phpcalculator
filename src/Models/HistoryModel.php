@@ -6,6 +6,7 @@ use Jakmall\Recruitment\Calculator\Interfaces\StorageConnectionInterface;
 class HistoryModel
 {
     private $table_name = 'history';
+    public $id;
     public $command;
     public $description;
     public $result;
@@ -24,6 +25,7 @@ class HistoryModel
     public function getColumn()
     {
         return [
+            'id' => 'INTEGER PRIMARY KEY AUTOINCREMENT',
             'command' => 'VARCHAR(255) NOT NULL',
             'description' => 'VARCHAR(255) NOT NULL',
             'result' => 'INTEGER NOT NULL',
@@ -35,8 +37,10 @@ class HistoryModel
     public function insert()
     {
         try{
-            $data = [$this->command, $this->description, $this->result, $this->output, $this->time];
-            $this->storage->insert($this->table_name, $this->getColumn(), $data);
+            $data = [$this->id, $this->command, $this->description, $this->result, $this->output, $this->time];
+            $data = array_combine(array_keys($this->getColumn()), $data);
+
+            return $this->storage->insert($this->table_name, $data);
         } catch (Throwable $e)
         {
             throw $e;
