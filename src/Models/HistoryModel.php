@@ -72,4 +72,16 @@ class HistoryModel
         return $data;
     }
 
+    public function getById($id)
+    {
+        $data = $this->storage->filterById($this->table_name, $id);
+        return $data;
+    }
+
+    public function deleteById($id)
+    {
+        $data = $this->storage->deleteById($this->table_name, $id);
+        return $data;
+    }
+    
 }

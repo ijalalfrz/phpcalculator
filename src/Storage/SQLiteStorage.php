@@ -45,34 +45,63 @@ class SQLiteStorage implements StorageConnectionInterface, StorageBLLInterface
 
             $this->conn->exec($sql);
             return TRUE;
-        } catch (Throwable $e) {
+        } catch (\PDOException $e) {
             throw $e;
         }
     }
 
     public function selectAllColumn($table_name)
     {
-        $sql = "SELECT * FROM ".$table_name;
-        $stmt = $this->conn->query($sql);
+        try {
 
-        $data = [];
-        while ($history = $stmt->fetchObject()) {
-            $data[] = $history;
+            $sql = "SELECT * FROM ".$table_name;
+            $stmt = $this->conn->query($sql);
+    
+            $data = [];
+            while ($history = $stmt->fetchObject()) {
+                $data[] = $history;
+            }
+    
+            return $data;
+        } catch (\PDOException $e) {
+            throw $e;
         }
-
-        return $data;
     }
 
     public function getLastInsertedData($table_name)
     {
-        $sql = "SELECT * FROM ".$table_name. " ORDER BY id DESC LIMIT 1";
-        $stmt = $this->conn->query($sql);
+        try {
 
-        while ($history = $stmt->fetchObject()) {
-            $data = $history;
+            $sql = "SELECT * FROM ".$table_name. " ORDER BY id DESC LIMIT 1";
+            $stmt = $this->conn->query($sql);
+    
+            while ($history = $stmt->fetchObject()) {
+                $data = $history;
+            }
+    
+            return $data;
+        } catch (\PDOException $e) {
+            throw $e;
         }
+    }
 
-        return $data;
+    public function filterById($table_name, $id)
+    {
+        try {
+
+            $sql = "SELECT * FROM ".$table_name. " WHERE id=:id";
+            $stmt = $this->conn->prepare($sql);
+    
+            $stmt->execute([
+                'id' => $id
+            ]);
+    
+            $data = $stmt->fetchObject();        
+    
+            return $data;
+        } catch(\PDOException $e) {
+            throw $e;
+        }
     }
 
     public function filterByColumn($table_name, $column)
@@ -115,10 +144,6 @@ class SQLiteStorage implements StorageConnectionInterface, StorageBLLInterface
         } catch (\PDOException $e) {
             throw $e;
         }
-
-
-
-
     }
 
     public function deleteAllData($table_name)
@@ -169,6 +194,24 @@ class SQLiteStorage implements StorageConnectionInterface, StorageBLLInterface
             }
             $stmt->execute($values);
             return $this->conn->lastInsertId();
+        } catch(\PDOException $e) {
+            throw $e;
+        }
+    }
+
+    public function deleteById($table_name, $id)
+    {
+        try {
+
+            $sql = "DELETE FROM ".$table_name. " WHERE id=:id";
+            $stmt = $this->conn->prepare($sql);
+    
+            $stmt->execute([
+                'id' => $id
+            ]);
+        
+    
+            return true;
         } catch(\PDOException $e) {
             throw $e;
         }

@@ -4,6 +4,8 @@ namespace Jakmall\Recruitment\Calculator\Http\Controller;
 
 use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
 
 class HistoryController
 {
@@ -24,14 +26,58 @@ class HistoryController
         return $data;
     }
 
-    public function show($id)
+    public function show(Request $req, $id)
     {
-        dd('create show history by id here'.$id);
+        $driver = 'database';
+        if ($req->has('driver')) {
+            $driver = $req->input('driver');
+        }
+        $this->history_service->setDriver($driver);
+        $data = $this->history_service->show($id);
+        if ($data) {
+            $res = (array) $data;
+        } else{
+            $res = [
+                'code' => 404,
+                'message' => 'Data not found'
+            ];
+        }
+
+        $ress = new Response($res, $res['code']??200);
+        return $ress;
+
     }
 
-    public function remove()
+    public function remove(Request $req, $id)
     {
-        // todo: modify codes to remove history
-        dd('create remove history logic here');
+
+        $this->history_service->setDriver('database');
+        $data_sql = $this->history_service->show($id);
+        $this->history_service->setDriver('file');
+        $data_csv = $this->history_service->show($id);
+
+        if ($data_sql && $data_csv) {
+            $this->history_service->setDriver('database');
+            $remove_sql = $this->history_service->remove($id);
+            $this->history_service->setDriver('file');
+            $remove_file = $this->history_service->remove($id);
+            
+            if ($remove_file && $remove_sql) {
+                $res = NULL;             
+            } else {
+                $res = [
+                    'code' => 400,
+                    'message' => 'Error removing data'
+                ];
+            }
+        } else{
+            $res = [
+                'code' => 404,
+                'message' => 'Data not found'
+            ];
+        }
+
+        $ress = new Response($res, $res['code']??204);
+        return $ress;
     }
 }
