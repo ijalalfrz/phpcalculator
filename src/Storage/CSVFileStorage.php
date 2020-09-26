@@ -23,7 +23,7 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
 
     public function createTable($table_name, $column)
     {
-        $header = ['id'];
+        $header = [];
         $header_column = array_keys($column);
         foreach($header_column as $hc) {
             array_push($header, $hc);
@@ -79,7 +79,7 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
             $csv_line = fgetcsv($file, 1024);
 
             foreach($column as $k => $filter_values) {
-                if (\in_array($csv_line[$mapping_idx[$k]], $filter_values)) {
+                if ($csv_line && \in_array($csv_line[$mapping_idx[$k]], $filter_values)) {
                     $data[] = $csv_line;
                 }
             }
