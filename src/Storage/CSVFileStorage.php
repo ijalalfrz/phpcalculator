@@ -100,6 +100,7 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
             $csv_line = fgetcsv($file, 1024);
 
             foreach($column as $k => $filter_values) {
+
                 if ($csv_line && \in_array(\lcfirst($csv_line[$mapping_idx[$k]]), $filter_values)) {
                     foreach ($header as $head) {
                         $data_column[$head] = $csv_line[$mapping_idx[$head]];
