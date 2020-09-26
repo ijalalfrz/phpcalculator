@@ -2,19 +2,31 @@
 
 namespace Jakmall\Recruitment\Calculator\Http\Controller;
 
+use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 use Illuminate\Http\Request;
 
 class HistoryController
 {
-    public function index()
+
+    public function __construct(CommandHistoryManagerInterface $history_service)
     {
-        // todo: modify codes to get history
-        dd('create history logic here');
+        $this->history_service = $history_service;
+    }
+    public function index(Request $req)
+    {
+        $driver = 'database';
+        if ($req->has('driver')) {
+            $driver = $req->input('driver');
+        }
+        $this->history_service->setDriver($driver);
+        $data = $this->history_service->findAll();
+
+        return $data;
     }
 
-    public function show()
+    public function show($id)
     {
-        dd('create show history by id here');
+        dd('create show history by id here'.$id);
     }
 
     public function remove()

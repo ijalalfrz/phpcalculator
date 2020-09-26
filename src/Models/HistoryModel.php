@@ -49,7 +49,9 @@ class HistoryModel
 
     public function getAll()
     {
+        
         $data = $this->storage->selectAllColumn($this->table_name);
+
         return $data;
     }
 

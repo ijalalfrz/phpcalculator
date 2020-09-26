@@ -19,7 +19,7 @@ class RouteServiceProvider implements ContainerServiceProviderInterface
     /**
      * @inheritDoc
      */
-    public function register(Container $container): void
+    public function register(Container $container, $config=NULL): void
     {
         $this->registerEventDispatcher($container);
         $this->registerRouter($container);

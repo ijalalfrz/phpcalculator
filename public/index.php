@@ -6,13 +6,13 @@ use Illuminate\Container\Container;
 use Illuminate\Http\Request;
 use Jakmall\Recruitment\Calculator\Http\Foundation\RouteServiceProvider;
 
-$appConfig = require_once __DIR__.'/../config/app.php';
-$providers = $appConfig['providers'];
+$app_config = require_once __DIR__.'/../config/app.php';
+$providers = $app_config['providers'];
 
 $container = new Container();
 $container->make(RouteServiceProvider::class)->register($container);
 foreach ($providers as $provider) {
-    $container->make($provider)->register($container);
+    $container->make($provider)->register($container, $app_config);
 }
 
 /** @var \Illuminate\Routing\Router $router */
