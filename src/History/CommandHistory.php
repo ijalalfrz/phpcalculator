@@ -20,8 +20,8 @@ class CommandHistory implements CommandHistoryManagerInterface
         $sqlite_driver = new SQLiteStorage($config['sqlite_path']);
         $file_driver = new CSVFileStorage($config['csvfile_path']);
 
-        $this->driver['database'] ??= $sqlite_driver;
-        $this->driver['file'] ??= $file_driver;
+        $this->driver['database'] = $sqlite_driver;
+        $this->driver['file'] = $file_driver;
 
     }
 
