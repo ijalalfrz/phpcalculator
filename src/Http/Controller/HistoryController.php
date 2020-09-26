@@ -50,14 +50,19 @@ class HistoryController
 
     public function remove(Request $req, $id)
     {
-        $driver = 'database';
-        if ($req->has('driver')) {
-            $driver = $req->input('driver');
-        }
-        $this->history_service->setDriver($driver);
-        $data = $this->history_service->show($id);
-        if ($data) {
-            if ($this->history_service->remove($id)) {
+
+        $this->history_service->setDriver('database');
+        $data_sql = $this->history_service->show($id);
+        $this->history_service->setDriver('file');
+        $data_csv = $this->history_service->show($id);
+
+        if ($data_sql && $data_csv) {
+            $this->history_service->setDriver('database');
+            $remove_sql = $this->history_service->remove($id);
+            $this->history_service->setDriver('file');
+            $remove_file = $this->history_service->remove($id);
+            
+            if ($remove_file && $remove_sql) {
                 $res = NULL;             
             } else {
                 $res = [
