@@ -75,6 +75,20 @@ class SQLiteStorage implements StorageConnectionInterface, StorageBLLInterface
         return $data;
     }
 
+    public function filterById($table_name, $id)
+    {
+        $sql = "SELECT * FROM ".$table_name. " WHERE id=:id";
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([
+            'id' => $id
+        ]);
+
+        $data = $stmt->fetchObject();        
+
+        return $data;
+    }
+
     public function filterByColumn($table_name, $column)
     {
         try {

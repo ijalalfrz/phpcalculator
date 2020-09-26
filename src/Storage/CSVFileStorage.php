@@ -147,4 +147,77 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
             throw $e;
         }
     }
+
+    public function filterById($table_name, $id)
+    {
+        try {
+            $file = \fopen($this->csv_path, 'r');
+    
+            $header = fgetcsv($file, 1024);
+            \fclose($file);
+    
+            $mapping_idx = [];
+            $idx = 0;
+            foreach ($header as $head) {
+                
+                $mapping_idx[$head] = $idx;
+                $idx ++;
+            }
+    
+    
+            $data_column = [];
+            $data = NULL;
+            $idx = 0;
+            $file = fopen($this->csv_path, 'r');
+
+            $found = false;
+            while(!feof($file) && !$found)
+            {
+                $csv_line = fgetcsv($file, 1024);
+    
+                if ($idx != 0 && $csv_line) {
+                    
+                    foreach ($header as $head) {
+                        $data_column[$head] = $csv_line[$mapping_idx[$head]];
+                    }
+                    if ($id == $data_column['id']) {
+
+                        $data = (object) $data_column;
+                        $found = true;
+                    }
+                }
+    
+                $idx++;
+            }
+            fclose($file);
+            return $data;
+        } catch (Exception $e) {
+            throw $e;
+        }
+        
+    }
+
+    public function deleteById($table_name, $id)
+    {
+        try{
+
+            $file = fopen($this->csv_path,'r');
+            $path = \explode('/', $this->csv_path)[0];
+            $temp_file = fopen($path.'/file_temp.csv','w');
+    
+    
+            while (($data = fgetcsv($file, 1000)) !== FALSE){
+                if($data[0] == $id){
+                    continue;
+                }
+                fputcsv($temp_file,$data);
+            }
+            fclose($file);
+            fclose($temp_file);
+            rename($path.'/file_temp.csv', $this->csv_path);
+            return true;
+        } catch(Exception $e) {
+            throw $e;
+        }
+    }
 }

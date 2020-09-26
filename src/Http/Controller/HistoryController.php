@@ -4,6 +4,8 @@ namespace Jakmall\Recruitment\Calculator\Http\Controller;
 
 use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+
 
 class HistoryController
 {
@@ -24,9 +26,26 @@ class HistoryController
         return $data;
     }
 
-    public function show($id)
+    public function show(Request $req, $id)
     {
-        dd('create show history by id here'.$id);
+        $driver = 'database';
+        if ($req->has('driver')) {
+            $driver = $req->input('driver');
+        }
+        $this->history_service->setDriver($driver);
+        $data = $this->history_service->show($id);
+        if ($data) {
+            $res = (array) $data;
+        } else{
+            $res = [
+                'code' => 404,
+                'message' => 'Data not found'
+            ];
+        }
+
+        $ress = new Response($res, $res['code']??200);
+        return $ress;
+
     }
 
     public function remove()
