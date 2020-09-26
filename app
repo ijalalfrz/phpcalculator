@@ -14,6 +14,12 @@ try {
     $dispatcher = new Dispatcher();
     $app = new Application($container, $dispatcher, '0.5');
     $app->setName('Calculator');
+    $app_config = require_once __DIR__.'/config/app.php';
+    $providers = $app_config['providers'];
+
+    foreach ($providers as $provider) {
+        $container->make($provider)->register($container, $app_config);
+    }
 
     $commands = require_once __DIR__.'/commands.php';
     $commands = collect($commands)
@@ -26,6 +32,7 @@ try {
     ;
 
     $app->addCommands($commands);
+    
 
     $app->run(new ArgvInput(), new ConsoleOutput());
 } catch (Throwable $e) {
