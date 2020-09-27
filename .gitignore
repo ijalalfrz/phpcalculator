@@ -1,2 +1,4 @@
 /vendor
 /db/*
+.phpunit*
+/tests/db/*

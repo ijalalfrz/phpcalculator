@@ -11,11 +11,14 @@
         "illuminate/events": "5.8.*",
         "illuminate/http": "5.8.*",
         "illuminate/routing": "5.8.*",
-        "illuminate/support": "5.8.*"
+        "illuminate/support": "5.8.*",
+        "phpunit/phpunit": "^9.3"
     },
     "autoload": {
         "psr-4": {
-            "Jakmall\\Recruitment\\Calculator\\": "src/"
+            "Jakmall\\Recruitment\\Calculator\\": "src/",
+            "Tests": "tests/"
+
         }
     },
     "config": {
@@ -24,5 +27,8 @@
         "optimize-autoloader": true
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "guzzlehttp/guzzle": "^7.1"
+    }
 }

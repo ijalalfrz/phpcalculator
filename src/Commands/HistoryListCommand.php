@@ -43,7 +43,7 @@ class HistoryListCommand extends BaseCommand
 
         if ($input['filter']) {
 
-            $filter['command'] =  $input['filter'];
+            $filter['command'] = $input['filter'];
             $data = $this->service->filter($filter);
         } else {
             $data = $this->service->findAll();
@@ -74,7 +74,7 @@ class HistoryListCommand extends BaseCommand
     {   
         return [
             'driver' => $this->option('driver'),
-            'filter' => $filter_command = $this->argument('commands')
+            'filter' => $this->argument('commands')
         ];
     }
 
