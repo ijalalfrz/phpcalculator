@@ -1,6 +1,8 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<phpunit>
-<testsuite name='Test Calculator'>
-    <directory suffix=".php">/tests/</directory>
-</testsuite>
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php">
+    <testsuites>
+        <testsuite name="Test calculator app">
+            <directory suffix=".php">./tests/</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

@@ -32,6 +32,7 @@ class HistoryModel
             'output' => 'VARCHAR(255) NOT NULL',
             'time' => 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
         ];
+
     }
 
     public function insert()

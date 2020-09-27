@@ -6,10 +6,10 @@ use PHPUnit_Framework_MockObject_MockObject;
 use Symfony\Component\Console\Application;
 use Illuminate\Container\Container;
 use Symfony\Component\Console\Tester\CommandTester;
-use Jakmall\Recruitment\Calculator\Commands\HistoryListCommand;
+use Jakmall\Recruitment\Calculator\Commands\HistoryClearCommand;
 use Jakmall\Recruitment\Calculator\History\CommandHistory;
 
-class HistoryListCommandTest extends TestCase
+class HistoryClearCommandTest extends TestCase
 {
     protected function setUp():void
     {
@@ -20,10 +20,10 @@ class HistoryListCommandTest extends TestCase
         
         $application = new Application();
         
-        $test_c = new HistoryListCommand($this->command_mock);
+        $test_c = new HistoryClearCommand($this->command_mock);
         $test_c->setLaravel(new Container());
         $application->add($test_c);
-        $command = $application->find('history:list');
+        $command = $application->find('history:clear');
         $this->command_tester = new CommandTester($command);
 
         $this->arr_mock = [
@@ -37,55 +37,30 @@ class HistoryListCommandTest extends TestCase
         
     }
 
-    public function testGetAllExecute()
+    public function testExecute()
     {
         $this->command_mock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('setDriver')
-            ->with('database')
+            ->with($this->logicalOr(
+                $this->equalTo('database'),
+                $this->equalTo('file')
+            ))
             ->willReturn(true);
 
 
         $this->command_mock
-            ->expects($this->once())
-            ->method('findAll')
-            ->willReturn([(object) $this->arr_mock]);
+            ->expects($this->exactly(2))
+            ->method('clearAll')
+            ->will($this->onConsecutiveCalls(true,true));
 
        
-        $this->command_tester->execute([
-            'commands' => ''
-        ]);
+        $this->command_tester->execute(['']);
         
-        $str_compare = $this->cleanString(trim($this->command_tester->getDisplay()));
-        $this->assertEquals($str_compare, 'nocommanddescriptionresultoutputtime1AddDescResOutTime');
+        // $str_compare = $this->cleanString(trim($this->command_tester->getDisplay()));
+        $this->assertEquals(trim($this->command_tester->getDisplay()), "History cleared!");
 
    
-    }
-
-    public function testFilterExecute()
-    {
-
-        $this->command_mock
-            ->expects($this->once())
-            ->method('setDriver')
-            ->with('database')
-            ->willReturn(true);
-
-        $this->command_mock
-            ->expects($this->once())
-            ->method('filter')
-            ->with([
-                'command'=>'add'
-            ])
-            ->willReturn([(object) $this->arr_mock]);
-
-        // test filter
-        $this->command_tester->execute([
-            'commands' => 'add'
-        ]);
-        $str_compare = $this->cleanString(trim($this->command_tester->getDisplay()));        
-        $this->assertEquals($str_compare, 'nocommanddescriptionresultoutputtime1AddDescResOutTime');
-
     }
 
     public function cleanString($str){
