@@ -9,4 +9,6 @@ interface StorageBLLInterface
     public function filterByColumn($table, $column);
     public function deleteAllData($table);
     public function insert($table, Array $data);
+    public function filterById($table, $id);
+    public function deleteById($table, $id);
 }

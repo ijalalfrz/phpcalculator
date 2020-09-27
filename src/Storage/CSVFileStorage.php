@@ -14,6 +14,11 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
         $this->path = $path;
     }
 
+    public function getPath()
+    {
+        return $this->csv_path;
+    }
+
     public function connect()
     {
         if (!is_dir($this->path)) {
@@ -38,6 +43,7 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
                 \fputcsv($file, $header);
                 \fclose($file);
             }
+            return true;
         } catch(Exception $e) {
             throw $e;
         }
@@ -152,7 +158,7 @@ class CSVFileStorage implements StorageConnectionInterface, StorageBLLInterface
     public function insert($table_name, $data)
     {
         try {
-
+            
             $file = \fopen($this->csv_path, 'a');
             $values = array_values($data);
             \fputcsv($file, $values);        
