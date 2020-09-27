@@ -22,8 +22,28 @@ class HistoryController
         }
         $this->history_service->setDriver($driver);
         $data = $this->history_service->findAll();
+        $new_data = [];
 
-        return $data;
+            foreach($data as $d)
+            {
+                switch($d->command) {
+                    case 'Add': $input = array_map('intval', \explode(' + ',$d->description)); break;
+                    case 'Substract': $input = array_map('intval', \explode(' - ',$d->description)); break;
+                    case 'Multiply': $input = array_map('intval', \explode(' * ',$d->description)); break;
+                    case 'Divide': $input = array_map('intval', \explode(' / ',$d->description)); break;
+                    case 'Pow': $input = array_map('intval', \explode(' ^ ',$d->description)); break;
+                }
+
+                $convert = (array) $d;
+                $convert['input'] = $input;
+                $new_data[] = $convert;
+                
+                
+            }
+
+
+
+        return $new_data;
     }
 
     public function show(Request $req, $id)
@@ -36,6 +56,16 @@ class HistoryController
         $data = $this->history_service->show($id);
         if ($data) {
             $res = (array) $data;
+
+            switch($data->command) {
+                case 'Add': $input = array_map('intval', \explode(' + ',$data->description)); break;
+                case 'Substract': $input = array_map('intval', \explode(' - ',$data->description)); break;
+                case 'Multiply': $input = array_map('intval', \explode(' * ',$data->description)); break;
+                case 'Divide': $input = array_map('intval', \explode(' / ',$data->description)); break;
+                case 'Pow': $input = array_map('intval', \explode(' ^ ',$data->description)); break;
+            }
+            $res['input'] = $input;
+
         } else{
             $res = [
                 'code' => 404,
