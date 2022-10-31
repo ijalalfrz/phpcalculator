@@ -1,4 +1,4 @@
-# Jakmall Calculator
+# Calculator
 
 ## Software Requirements
 - Docker
